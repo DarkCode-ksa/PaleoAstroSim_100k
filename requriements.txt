@@ -1,0 +1,4 @@
+astropy>=5.0
+numpy>=1.21
+matplotlib>=3.5
+jplephem>=2.18
