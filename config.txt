@@ -1,12 +1,3 @@
-# config.txt — محاكاة كاملة لـ 4 يناير 10,480 ق.م. (12:00 ليلاً)
-# التاريخ: -10480-01-04T00:00:00 (منتصف الليل)
-# المواقع: الأهرامات، أبو الهول، النيل، أوزيريون
-# النجوم: حزام أوريون (Alnitak, Alnilam, Mintaka), سيريوس
-# المسافات: الأرض-الشمس، الأرض-القمر
-
-# ==============================
-# 1. محاكاة الأهرامات + أوريون
-# ==============================
 sim1.name = Giza_Pyramids_Orion_10480BCE
 sim1.lat = 29.9792
 sim1.lon = 31.1342
@@ -15,9 +6,6 @@ sim1.targets = Alnitak, Alnilam, Mintaka, Sirius
 sim1.plot = True
 sim1.mode = alignment
 
-# ==============================
-# 2. أبو الهول + سيريوس
-# ==============================
 sim2.name = Sphinx_Sirius_10480BCE
 sim2.lat = 29.9753
 sim2.lon = 31.1378
@@ -26,9 +14,6 @@ sim2.targets = Sirius
 sim2.plot = True
 sim2.mode = alignment
 
-# ==============================
-# 3. معبد أوزيريون (أبيدوس)
-# ==============================
 sim3.name = Osireion_Abydos_10480BCE
 sim3.lat = 26.1847
 sim3.lon = 31.9189
@@ -37,9 +22,6 @@ sim3.targets = Alnitak, Alnilam, Mintaka
 sim3.plot = True
 sim3.mode = alignment
 
-# ==============================
-# 4. النيل (نقطة قرب الجيزة)
-# ==============================
 sim4.name = Nile_Giza_10480BCE
 sim4.lat = 30.0167
 sim4.lon = 31.2333
@@ -48,24 +30,26 @@ sim4.targets = Sirius, moon
 sim4.plot = True
 sim4.mode = alignment
 
-# ==============================
-# 5. مسافات: الأرض ←→ الشمس، الأرض ←→ القمر
-# ==============================
-sim5.name = Earth_Sun_Moon_Distance_10480BCE
+sim5.name = Earth_Sun_Distance_10480BCE
 sim5.lat = 0.0
 sim5.lon = 0.0
 sim5.date = -10480-01-04T00:00:00
-sim5.targets = sun, moon
+sim5.targets = sun
 sim5.plot = False
 sim5.mode = distance
 
-# ==============================
-# 6. محاكاة شاملة (كل المواقع + كل النجوم)
-# ==============================
-sim6.name = Full_Alignment_10480BCE
-sim6.lat = 29.9792
-sim6.lon = 31.1342
+sim6.name = Earth_Moon_Distance_10480BCE
+sim6.lat = 0.0
+sim6.lon = 0.0
 sim6.date = -10480-01-04T00:00:00
-sim6.targets = Alnitak, Alnilam, Mintaka, Sirius, sun, moon
-sim6.plot = True
-sim6.mode = full
+sim6.targets = moon
+sim6.plot = False
+sim6.mode = distance
+
+sim7.name = Full_Alignment_10480BCE
+sim7.lat = 29.9792
+sim7.lon = 31.1342
+sim7.date = -10480-01-04T00:00:00
+sim7.targets = Alnitak, Alnilam, Mintaka, Sirius, sun, moon
+sim7.plot = True
+sim7.mode = full
