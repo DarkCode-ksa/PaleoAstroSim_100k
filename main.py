@@ -1,4 +1,4 @@
-# main.py — محاكاة فلكية كاملة لـ 10,480 ق.م. (بدون أخطاء)
+# main.py — Astronomical Simulation for 10,480 BCE (English + UTF-8 Safe)
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,7 +6,7 @@ from astropy.time import Time
 from astropy.coordinates import SkyCoord, EarthLocation, AltAz, get_body
 from astropy import units as u
 
-# --- قاعدة النجوم ---
+# --- Star Database ---
 STARS = {
     "Alnitak": ("05h40m45.5s", "-01d56m33s"),
     "Alnilam": ("05h36m12.8s", "-01d12m06s"),
@@ -14,7 +14,7 @@ STARS = {
     "Sirius": ("06h45m08.9s", "-16d42m58s")
 }
 
-# --- تحميل config.txt ---
+# --- Load config.txt ---
 def load_config():
     sims = []
     current = {}
@@ -22,39 +22,44 @@ def load_config():
         with open("config.txt", "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
-                if not line or line.startswith("#"): continue
+                if not line or line.startswith("#"): 
+                    continue
                 if line.startswith("sim"):
-                    if current: sims.append(current)
+                    if current: 
+                        sims.append(current)
                     current = {"name": line.split(".")[0]}
                 else:
                     try:
                         k, v = line.split("=", 1)
                         k, v = k.strip(), v.strip()
-                        if k in ["lat", "lon"]: current[k] = float(v)
-                        elif k == "plot": current[k] = v.lower() == "true"
-                        else: current[k] = v
-                    except: pass
-        if current: sims.append(current)
+                        if k in ["lat", "lon"]: 
+                            current[k] = float(v)
+                        elif k == "plot": 
+                            current[k] = v.lower() == "true"
+                        else: 
+                            current[k] = v
+                    except: 
+                        pass
+        if current: 
+            sims.append(current)
     except Exception as e:
-        print(f"خطأ في config.txt: {e}")
+        print(f"Error reading config.txt: {e}")
     return sims
 
-# --- المحاكاة ---
+# --- Simulation ---
 def simulate(sim):
     print(f"\n{'='*60}")
-    # آمن ضد الأخطاء
     print(f"   {sim.get('name', 'Unknown')} | {sim.get('date', 'No Date')}")
     print(f"{'='*60}")
     
-    # التحقق من وجود التاريخ
     if 'date' not in sim:
-        print("خطأ: 'date' مفقود في config.txt")
+        print("Error: 'date' missing in config.txt")
         return
     
     try:
         time = Time(sim['date'], format='iso', scale='utc')
     except Exception as e:
-        print(f"خطأ في التاريخ: {e}")
+        print(f"Invalid date format: {e}")
         return
     
     loc = EarthLocation(lat=sim.get('lat', 0)*u.deg, lon=sim.get('lon', 0)*u.deg)
@@ -72,32 +77,33 @@ def simulate(sim):
                 from astropy.coordinates import solar_system_ephemeris
                 with solar_system_ephemeris.set('de432s'):
                     obj = get_body(t.lower(), time)
-            except: pass
+            except Exception as e:
+                print(f"Failed to get {t}: {e}")
         
         if obj:
             try:
                 altaz = obj.transform_to(frame)
                 results[t] = {'az': altaz.az.deg, 'alt': altaz.alt.deg}
-                print(f"{t}: أزيموث {altaz.az.deg:.2f}° | ارتفاع {altaz.alt.deg:.2f}°")
+                print(f"{t}: Azimuth {altaz.az.deg:.2f}° | Altitude {altaz.alt.deg:.2f}°")
             except Exception as e:
-                print(f"فشل في {t}: {e}")
+                print(f"Failed to compute {t}: {e}")
     
-    # --- مسافات ---
-    if sim.get("mode") == "distance" and len(results) >= 2:
-        names = list(results.keys())
+    # --- Distance Calculation ---
+    if sim.get("mode") == "distance" and len(targets) == 1:
         try:
-            from astropy.coordinates import GCRS
-            a = results[names[0]]['coord'] if 'coord' in results[names[0]] else None
-            b = results[names[1]]['coord'] if 'coord' in results[names[1]] else None
-            if a and b:
-                dist_au = a.separation_3d(b).to(u.au)
-                dist_km = dist_au.to(u.km)
-                print(f"\nمسافة {names[0]} ←→ {names[1]}:")
-                print(f"  → {dist_au:.6f} AU")
-                print(f"  → {dist_km:,.0f} كم")
-        except: pass
+            from astropy.coordinates import solar_system_ephemeris, get_body_barycentric
+            with solar_system_ephemeris.set('de432s'):
+                body_pos = get_body_barycentric(targets[0].lower(), time)
+                earth_pos = get_body_barycentric('earth', time)
+                dist = np.linalg.norm(body_pos.xyz - earth_pos.xyz) * u.au
+                dist_km = dist.to(u.km)
+                print(f"\nDistance Earth to {targets[0]}:")
+                print(f"  → {dist:.6f} AU")
+                print(f"  → {dist_km:,.0f} km")
+        except Exception as e:
+            print(f"Distance error: {e}")
     
-    # --- رسم ---
+    # --- Plot ---
     if sim.get("plot", False):
         plot_sky(results, sim.get('name', 'sim'))
 
@@ -106,23 +112,23 @@ def plot_sky(results, name):
     ax.set_xlim(0, 360); ax.set_ylim(-90, 90)
     for obj, d in results.items():
         ax.scatter(d['az'], d['alt'], s=120, label=obj, edgecolor='black')
-    ax.set_xlabel("أزيموث (°)")
-    ax.set_ylabel("ارتفاع (°)")
+    ax.set_xlabel("Azimuth (degrees)")
+    ax.set_ylabel("Altitude (degrees)")
     ax.legend()
     ax.grid(alpha=0.3)
-    ax.set_title(f"محاكاة: {name}")
+    ax.set_title(f"Simulation: {name}")
     os.makedirs("output", exist_ok=True)
     plt.savefig(f"output/{name}.png", dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"تم حفظ: output/{name}.png")
+    print(f"Saved: output/{name}.png")
 
-# --- التشغيل ---
+# --- Run ---
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)
     sims = load_config()
     if not sims:
-        print("لا توجد محاكاة — تحقق من config.txt")
+        print("No simulations found. Check config.txt")
     else:
         for sim in sims:
             simulate(sim)
-    print("\nتم الانتهاء! النتائج في مجلد 'output'")
+    print("\nDone! Results in 'output' folder")
