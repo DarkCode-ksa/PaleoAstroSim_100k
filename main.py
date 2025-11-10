@@ -1,9 +1,10 @@
-# main.py — Astronomical Simulation for 10,480 BCE (English + UTF-8 Safe)
+# main.py — Astronomical Simulation for 10,480 BCE (INI Format + UTF-8 Safe)
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from configparser import ConfigParser
 from astropy.time import Time
-from astropy.coordinates import SkyCoord, EarthLocation, AltAz, get_body
+from astropy.coordinates import SkyCoord, EarthLocation, AltAz, get_body, get_body_barycentric, solar_system_ephemeris
 from astropy import units as u
 
 # --- Star Database ---
@@ -14,46 +15,20 @@ STARS = {
     "Sirius": ("06h45m08.9s", "-16d42m58s")
 }
 
-# --- Load config.txt ---
-def load_config():
-    sims = []
-    current = {}
-    try:
-        with open("config.txt", "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#"): 
-                    continue
-                if line.startswith("sim"):
-                    if current: 
-                        sims.append(current)
-                    current = {"name": line.split(".")[0]}
-                else:
-                    try:
-                        k, v = line.split("=", 1)
-                        k, v = k.strip(), v.strip()
-                        if k in ["lat", "lon"]: 
-                            current[k] = float(v)
-                        elif k == "plot": 
-                            current[k] = v.lower() == "true"
-                        else: 
-                            current[k] = v
-                    except: 
-                        pass
-        if current: 
-            sims.append(current)
-    except Exception as e:
-        print(f"Error reading config.txt: {e}")
-    return sims
+# --- Load config.ini ---
+def load_config(path="config.ini"):
+    config = ConfigParser()
+    config.read(path, encoding="utf-8")
+    return config
 
 # --- Simulation ---
-def simulate(sim):
+def simulate(name, sim):
     print(f"\n{'='*60}")
-    print(f"   {sim.get('name', 'Unknown')} | {sim.get('date', 'No Date')}")
+    print(f"   {name} | {sim.get('date', 'No Date')}")
     print(f"{'='*60}")
     
     if 'date' not in sim:
-        print("Error: 'date' missing in config.txt")
+        print("Error: 'date' missing in config.ini")
         return
     
     try:
@@ -62,7 +37,14 @@ def simulate(sim):
         print(f"Invalid date format: {e}")
         return
     
-    loc = EarthLocation(lat=sim.get('lat', 0)*u.deg, lon=sim.get('lon', 0)*u.deg)
+    try:
+        lat = float(sim.get('lat', 0))
+        lon = float(sim.get('lon', 0))
+    except:
+        print("Invalid lat/lon values.")
+        return
+    
+    loc = EarthLocation(lat=lat*u.deg, lon=lon*u.deg)
     frame = AltAz(obstime=time, location=loc)
     targets = [t.strip() for t in sim.get('targets', '').split(",") if t.strip()]
     results = {}
@@ -70,11 +52,9 @@ def simulate(sim):
     for t in targets:
         obj = None
         if t in STARS:
-            star = SkyCoord(ra=STARS[t][0], dec=STARS[t][1], frame='icrs')
-            obj = star
+            obj = SkyCoord(ra=STARS[t][0], dec=STARS[t][1], frame='icrs')
         elif t.lower() in ['sun', 'moon']:
             try:
-                from astropy.coordinates import solar_system_ephemeris
                 with solar_system_ephemeris.set('de432s'):
                     obj = get_body(t.lower(), time)
             except Exception as e:
@@ -91,7 +71,6 @@ def simulate(sim):
     # --- Distance Calculation ---
     if sim.get("mode") == "distance" and len(targets) == 1:
         try:
-            from astropy.coordinates import solar_system_ephemeris, get_body_barycentric
             with solar_system_ephemeris.set('de432s'):
                 body_pos = get_body_barycentric(targets[0].lower(), time)
                 earth_pos = get_body_barycentric('earth', time)
@@ -104,8 +83,8 @@ def simulate(sim):
             print(f"Distance error: {e}")
     
     # --- Plot ---
-    if sim.get("plot", False):
-        plot_sky(results, sim.get('name', 'sim'))
+    if sim.get("plot", "false").lower() == "true":
+        plot_sky(results, sim.get('name', name))
 
 def plot_sky(results, name):
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -125,10 +104,10 @@ def plot_sky(results, name):
 # --- Run ---
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)
-    sims = load_config()
-    if not sims:
-        print("No simulations found. Check config.txt")
+    config = load_config()
+    if not config.sections():
+        print("No simulations found. Check config.ini")
     else:
-        for sim in sims:
-            simulate(sim)
+        for section in config.sections():
+            simulate(section, config[section])
     print("\nDone! Results in 'output' folder")
