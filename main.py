@@ -1,4 +1,4 @@
-# main.py — محاكاة فلكية 
+# main.py — محاكاة فلكية لـ 100,000 ق.م. (كل شيء في ملف واحد)
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -61,7 +61,7 @@ def simulate(sim):
     print(f"{'='*60}")
     
     loc = EarthLocation(lat=sim['lat']*u.deg, lon=sim['lon']*u.deg)
-    time = Time(sim['date'])
+    time = Time(sim['date'], format='iso', scale='utc')
     frame = AltAz(obstime=time, location=loc)
     targets = [t.strip() for t in sim['targets'].split(",")]
     results = {}
