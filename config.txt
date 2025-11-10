@@ -5,7 +5,6 @@ sim1.date = -10480-01-04T00:00:00
 sim1.targets = Alnitak, Alnilam, Mintaka, Sirius
 sim1.plot = True
 sim1.mode = alignment
-
 sim2.name = Sphinx_Sirius_10480BCE
 sim2.lat = 29.9753
 sim2.lon = 31.1378
@@ -13,7 +12,6 @@ sim2.date = -10480-01-04T00:00:00
 sim2.targets = Sirius
 sim2.plot = True
 sim2.mode = alignment
-
 sim3.name = Osireion_Abydos_10480BCE
 sim3.lat = 26.1847
 sim3.lon = 31.9189
@@ -21,7 +19,6 @@ sim3.date = -10480-01-04T00:00:00
 sim3.targets = Alnitak, Alnilam, Mintaka
 sim3.plot = True
 sim3.mode = alignment
-
 sim4.name = Nile_Giza_10480BCE
 sim4.lat = 30.0167
 sim4.lon = 31.2333
@@ -29,7 +26,6 @@ sim4.date = -10480-01-04T00:00:00
 sim4.targets = Sirius, moon
 sim4.plot = True
 sim4.mode = alignment
-
 sim5.name = Earth_Sun_Distance_10480BCE
 sim5.lat = 0.0
 sim5.lon = 0.0
@@ -37,7 +33,6 @@ sim5.date = -10480-01-04T00:00:00
 sim5.targets = sun
 sim5.plot = False
 sim5.mode = distance
-
 sim6.name = Earth_Moon_Distance_10480BCE
 sim6.lat = 0.0
 sim6.lon = 0.0
@@ -45,7 +40,6 @@ sim6.date = -10480-01-04T00:00:00
 sim6.targets = moon
 sim6.plot = False
 sim6.mode = distance
-
 sim7.name = Full_Alignment_10480BCE
 sim7.lat = 29.9792
 sim7.lon = 31.1342
