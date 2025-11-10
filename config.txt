@@ -8,7 +8,6 @@ sim1.date = -10480
 sim1.targets = Alnitak, Alnilam, Mintaka, Sirius
 sim1.plot = True
 sim1.mode = alignment
----
 
 # اتجاه أبو الهول نحو سيريوس
 sim2.name = Sphinx_Sirius_10480BCE
@@ -18,7 +17,7 @@ sim2.date = -10480
 sim2.targets = Sirius
 sim2.plot = True
 sim2.mode = alignment
----
+
 
 # معبد أوزيريون - أبيدوس
 sim3.name = Osireion_Abydos_10480BCE
@@ -28,7 +27,7 @@ sim3.date = -10480
 sim3.targets = Alnitak, Alnilam, Mintaka
 sim3.plot = True
 sim3.mode = alignment
----
+
 
 # النيل - الجيزة
 sim4.name = Nile_Giza_10480BCE
@@ -38,7 +37,7 @@ sim4.date = -10480
 sim4.targets = Sirius, moon
 sim4.plot = True
 sim4.mode = alignment
----
+
 
 # المسافة بين الأرض والشمس
 sim5.name = Earth_Sun_Distance_10480BCE
@@ -48,7 +47,7 @@ sim5.date = -10480
 sim5.targets = sun
 sim5.plot = False
 sim5.mode = distance
----
+
 
 # المسافة بين الأرض والقمر
 sim6.name = Earth_Moon_Distance_10480BCE
@@ -58,7 +57,7 @@ sim6.date = -10480
 sim6.targets = moon
 sim6.plot = False
 sim6.mode = distance
----
+
 
 # المحاذاة الكاملة
 sim7.name = Full_Alignment_10480BCE
