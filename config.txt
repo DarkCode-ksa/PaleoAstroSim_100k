@@ -1,0 +1,7 @@
+# config.txt — عدّل التاريخ كما تشاء
+sim1.name = Giza_50000BCE
+sim1.lat = 29.9792
+sim1.lon = 31.1342
+sim1.date = -50000-01-01T12:00:00
+sim1.targets = Alnitak, Alnilam, Mintaka
+sim1.plot = True
